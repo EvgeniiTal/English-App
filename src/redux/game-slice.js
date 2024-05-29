@@ -4,8 +4,8 @@ import { requestAllWords } from '../services/game'
 export const fetchAllWordsAsyncThunk = createAsyncThunk(
   'game/fetchAllWords',
   async () => {
-    const response = await requestAllWords()
-    return response
+    const data = await requestAllWords()
+    return data
   }
 )
 
@@ -19,8 +19,9 @@ export const gameSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchAllWordsAsyncThunk.fulfilled, (state, action) => {
-      state.allWords = action.payload
+    builder
+      .addCase(fetchAllWordsAsyncThunk.fulfilled, (state, action) => {
+        state.allWords = action.payload
     })
   }
 })

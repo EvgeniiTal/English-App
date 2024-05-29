@@ -1,4 +1,4 @@
 //All Words
-const allWordsEndpoint = '/letterGame/allWords'
+const allWordsEndpoint = '/api/letterGame/allWords'
 
 export { allWordsEndpoint }
