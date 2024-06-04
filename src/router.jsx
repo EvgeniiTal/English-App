@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { Layout } from './Layout'
 import { GameInsertLetter } from './pages/GameInsertLetter'
+import { Card } from './components/Card'
 
 export const router = createBrowserRouter([
   {
@@ -9,7 +10,12 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <GameInsertLetter />
+      },
+      {
+        path: '/card',
+        element: <Card />
       }
+
     ]
   }
 ])
