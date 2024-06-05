@@ -1,6 +1,6 @@
-import axios from 'axios'
+import axios from "axios"
 
 export const client = axios.create({
-  baseURL: 'https://q11.jvmhost.net',
-  timeout: 1000
+  baseURL: "https://q11.jvmhost.net",
+  timeout: 1000,
 })

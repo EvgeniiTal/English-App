@@ -1,7 +1,7 @@
-import { allWordsEndpoint } from '../utils/api'
-import { client } from '../utils/client'
+import { letterGameEndpoint } from "../utils/api"
+import { client } from "../utils/client"
 
-export const requestAllWords = async (params) => {
-  const { data } = await client.get(allWordsEndpoint, { params })
+export const requestWordsLetterGame = async (params) => {
+  const { data } = await client.get(letterGameEndpoint, { params })
   return data
 }
