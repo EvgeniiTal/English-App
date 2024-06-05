@@ -1,9 +1,15 @@
+import { Header } from "./components/Header"
+import { Main } from "./components/Main"
 import { Outlet } from 'react-router-dom'
 
-export function Layout () {
+export function Layout({ children }) {
   return (
-    <div>
-      <Outlet />
-    </div>
-  )
+    <>
+      <Header />
+      <Main>
+        <Outlet />
+        {children}
+      </Main>
+    </>
+  );
 }
