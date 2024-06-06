@@ -21,7 +21,7 @@ export const gameSlice = createSlice({
     builder.addCase(
       fetchWordsLetterGameAsyncThunk.fulfilled,
       (state, action) => {
-        state.allWords = action.payload;
+        state.allWords = action.payload
       }
     )
   },
