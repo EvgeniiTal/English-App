@@ -1,4 +1,7 @@
-//All Words
-const allWordsEndpoint = '/api/letterGame/allWords'
+// All Words
+const letterGameEndpoint = '/english/api/letterGame/allWords'
 
-export { allWordsEndpoint }
+// Comparison of Words
+const checkWordsEndpoint = '/english/api/letterGame/checkWord/1'
+
+export { letterGameEndpoint, checkWordsEndpoint }
