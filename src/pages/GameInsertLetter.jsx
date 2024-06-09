@@ -66,7 +66,9 @@ export function GameInsertLetter() {
     setInputValue(event.target.value)
   }
 
-  const filteredWords = selectedTopic ? allWords.filter((word) => word.topic === selectedTopic) : allWords
+  const filteredWords = selectedTopic
+  ? allWords.filter((word) => word.topic === selectedTopic)
+  : allWords.filter((word) => word.topic === '' || !word.topic)
 
   const getRandomLetterIndex = (word) => {
     if (word.length === 0) {
@@ -104,6 +106,7 @@ export function GameInsertLetter() {
           <h2>Game Insert Letter</h2>
           <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('Family')}>Words by Topic Family</button>
           <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('fruit')}>Words by Topic Fruit</button>
+          <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('')}>Words by Topic ?</button>
         </div>
       )}
 
