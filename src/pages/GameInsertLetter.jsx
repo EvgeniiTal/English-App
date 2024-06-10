@@ -1,110 +1,134 @@
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchAllWordsAsyncThunk } from '../redux/game-slice'
+import { fetchWordsLetterGameAsyncThunk } from '../redux/game-slice'
 
-export function GameInsertLetter () {
+export function GameInsertLetter() {
   // Hooks
   const dispatch = useDispatch()
-  const { allWords } = useSelector((state) => state.game)
+  const { allWords } = useSelector((state) => state.letterGame)
 
-  // State
+  const [gameStage, setGameStage] = useState('start')
+  const [selectedTopic, setSelectedTopic] = useState('')
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
-  const [gameStarted, setGameStarted] = useState(false)
-  const [gameCompleted, setGameCompleted] = useState(false)
-  const [hiddenLetterIndex, setHiddenLetterIndex] = useState(-1)
+  const [shownWords, setShownWords] = useState([])
+  const [inputValue, setInputValue] = useState('')
+  const [currentWord, setCurrentWord] = useState('')
+
+  useEffect(() => {
+    dispatch(fetchWordsLetterGameAsyncThunk())
+  }, [dispatch])
 
   // Methods
-  useEffect(() => {
-    if (gameStarted) {
-      dispatch(fetchAllWordsAsyncThunk())
-    }
-  }, [dispatch, gameStarted])
-
-  // const handleStartGame = () => {
-  //   setGameStarted(true)
-  //   setHiddenLetterIndex(getRandomLetterIndex())
-  //   setHiddenLetterIndex(0)
-  // }
-
   const handleStartGame = () => {
-    setGameStarted(true)
-    setHiddenLetterIndex(0)
+    setGameStage('chooseTopic')
+  }
+
+  const handleSelectTopic = (topic) => {
+    setSelectedTopic(topic)
+    setCurrentWordIndex(0)
+    setShownWords([])
+    setGameStage('showTopic')
+    const filteredWordsByTopic = allWords.filter((word) => word.topic === topic)
+    setCurrentWord(getWordWithMissingLetter(filteredWordsByTopic[0].englishWord))
   }
 
   const handleNextWord = () => {
-    if (currentWordIndex === allWords.length - 1) {
-      setGameCompleted(true)
+    const currentWord = filteredWords[currentWordIndex]
+    const wordWithoutMissingLetter = currentWord.englishWord.replace('_', '')
+
+    if (inputValue.toLowerCase() === wordWithoutMissingLetter.toLowerCase()) {
+      setCurrentWordIndex(currentWordIndex + 1)
+      setShownWords([...shownWords, currentWord])
+      setInputValue('')
     } else {
-      setCurrentWordIndex((prevIndex) => prevIndex + 1)
-      setHiddenLetterIndex(getRandomLetterIndex())
+      alert('Try again')
     }
   }
 
   const handlePlayAgain = () => {
     setCurrentWordIndex(0)
-    setGameCompleted(false)
-    setHiddenLetterIndex(0)
+    setShownWords([])
+    setGameStage('showTopic')
+    setInputValue('')
+    setCurrentWord(getWordWithMissingLetter(filteredWords[0].englishWord))
   }
 
-  const getRandomLetterIndex = () => {
-    return Math.floor(Math.random() * allWords[currentWordIndex].englishWord.length)
+  const handleSelectAnotherTopic = () => {
+    setSelectedTopic('')
+    setCurrentWordIndex(0)
+    setShownWords([])
+    setGameStage('chooseTopic')
+    setInputValue('')
+    setCurrentWord(getWordWithMissingLetter(filteredWords[0].englishWord))
   }
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value)
+  }
+
+  const filteredWords = selectedTopic
+  ? allWords.filter((word) => word.topic === selectedTopic)
+  : allWords.filter((word) => word.topic === '' || !word.topic)
+
+  const getRandomLetterIndex = (word) => {
+    if (word.length === 0) {
+      return 0
+    }
+    const letterIndex = Math.floor(Math.random() * word.length)
+    return letterIndex
+  }
+
+  const getWordWithMissingLetter = (word) => {
+    const letterIndex = getRandomLetterIndex(word)
+    const wordWithMissingLetter = word.slice(0, letterIndex) + '_' + word.slice(letterIndex + 1)
+    return wordWithMissingLetter
+  }
+
+  useEffect(() => {
+    if (currentWordIndex < filteredWords.length) {
+      const wordWithMissingLetter = getWordWithMissingLetter(filteredWords[currentWordIndex].englishWord)
+      setCurrentWord(wordWithMissingLetter)
+    }
+  }, [currentWordIndex])
 
   // Template
   return (
     <div>
-      <h1>Game Insert Letter</h1>
-      <h2>All words</h2>
-      <ul>
-        {allWords.map((word, index) => (
-          <li key={index}>{word.englishWord}</li>
-        ))}
-      </ul>
-      <h2>Random word</h2>
-      {gameStarted ? (
-        <>
-          {/* <ul>
-            {allWords[currentWordIndex] && (
-              <li key={currentWordIndex}>{allWords[currentWordIndex].englishWord}</li>
-            )}
-          </ul> */}
-           {/* <ul>
-            {allWords[currentWordIndex] && (
-              <li key={currentWordIndex}>
-                {allWords[currentWordIndex].englishWord
-                  .split('')
-                  .map((letter, index) => (
-                    <span key={index}>
-                      {index === hiddenLetterIndex ? '_' : letter}
-                    </span>
-                  ))}
-              </li>
-            )}
-          </ul> */}
-          <ul>
-  {allWords[currentWordIndex] && (
-    <li key={currentWordIndex}>
-      {allWords[currentWordIndex].englishWord
-        .split('')
-        .map((letter, index) => (
-          <span key={index}>
-            {index === hiddenLetterIndex ? '_' : letter}
-          </span>
-        ))}
-    </li>
-  )}
-</ul>
-          {gameCompleted ? (
+      {gameStage === 'start' && (
+        <div className='text-center'>
+        <h2>Game Insert Letter</h2>
+        <button type ='button' className='btn btn-primary m-2' onClick={handleStartGame}>Start Game</button>
+        </div>
+      )}
+
+      {gameStage === 'chooseTopic' && (
+        <div className='text-center'>
+          <h2>Game Insert Letter</h2>
+          <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('Family')}>Words by Topic Family</button>
+          <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('fruit')}>Words by Topic Fruit</button>
+          <button type ='button' className='btn btn-primary m-2' onClick={() => handleSelectTopic('')}>Words by Topic ?</button>
+        </div>
+      )}
+
+      {gameStage === 'showTopic' && (
+        <div className='text-center'>
+          <h2>Game Insert Letter</h2>
+          <p>Selected Topic: {selectedTopic}</p>
+          {currentWordIndex < filteredWords.length ? (
             <div>
-              <p>Вы прошли игру</p>
-              <button onClick={handlePlayAgain}>Play Again</button>
+              <p>Word {currentWordIndex + 1}</p>
+              <p>{currentWord}</p>
+              <input type='text' value={inputValue} onChange={handleInputChange} />
+              <button type='button' className='btn btn-success m-2' onClick={handleNextWord}>Next</button>
             </div>
           ) : (
-            <button onClick={handleNextWord}>Next</button>
+            <div>
+              <p>Game Over</p>
+              <button type='button' className='btn btn-secondary m-2' onClick={handlePlayAgain}>Play Again</button>
+              <button type='button' className='btn btn-secondary m-2' onClick={handleSelectAnotherTopic}>Select Another Topic</button>
+            </div>
           )}
-        </>
-      ) : (
-        <button onClick={handleStartGame}>Start Game</button>
+        </div>
       )}
     </div>
   )
