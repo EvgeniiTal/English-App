@@ -1,7 +1,10 @@
 // All Words
-const letterGameEndpoint = '/english/api/letterGame/allWords'
+const letterGameEndpoint = '/api/letterGame/allWords'
 
 // Comparison of Words
-const checkWordsEndpoint = '/english/api/letterGame/checkWord/1'
+const checkWordsEndpoint = '/api/letterGame/checkWord/1'
 
-export { letterGameEndpoint, checkWordsEndpoint }
+// All Tenses
+const tensesEndpoint = '/api/tenses'
+
+export { letterGameEndpoint, checkWordsEndpoint, tensesEndpoint }
